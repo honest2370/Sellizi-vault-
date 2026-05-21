@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sellizi Vault — Digital Products</title>
+<meta name="description" content="Sellizi Vault — premium digital products for members.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- Chariow -->
+<script>
+(function(){
+  var s=document.createElement('script');s.src='https://js.chariowcdn.com/v1/widget.min.js';s.async=true;document.head.appendChild(s);
+  var l=document.createElement('link');l.rel='stylesheet';l.href='https://js.chariowcdn.com/v1/widget.min.css';document.head.appendChild(l);
+})();
+</script>
+
+<style>
+/* ── TOKENS ── */
+:root{
+  --bg:#07080C;--surf:#0F1117;--card:#141820;--border:#1C2130;
+  --accent:#FFCC00;--accent2:#FF6B35;--text:#EEF0F8;--muted:#8892A4;
+  --green:#22C55E;--red:#EF4444;--blue:#3B82F6;
+  --r:16px;--font:'DM Sans',sans-serif;--head:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:rgba(7,8,12,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:var(--head);font-size:19px;font-weight:800;letter-spacing:-.5px}
+.logo em{color:var(--accent);font-style:normal}
+.nav-r{display:flex;align-items:center;gap:10px}
+.access-chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:none}
+.chip-locked{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.chip-unlocked{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.ham{background:none;border:none;cursor:pointer;display:none;flex-direction:column;gap:5px;padding:4px}
+.ham span{display:block;width:21px;height:2px;background:var(--text);border-radius:2px}
+.ham.visible{display:flex}
+
+/* ── DRAWER ── */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:all}
+.dr{position:fixed;top:0;right:-100%;width:min(300px,88vw);height:100%;z-index:201;background:var(--surf);border-left:1px solid var(--border);transition:right .33s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding-bottom:40px}
+.dr.on{right:0}
+.dr-head{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.dr-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.dr-user{display:flex;align-items:center;gap:11px;margin-top:16px}
+.dr-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#000}
+.dr-name{font-weight:700;font-size:14px}
+.dr-email{font-size:12px;color:var(--muted);margin-top:2px}
+.dr-sec{padding:14px 18px 6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.dr-item{display:flex;align-items:center;gap:11px;padding:13px 18px;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s}
+.dr-item:hover{background:var(--card)}
+.dr-item .dr-ic{width:22px;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dr-access-card{margin:14px;border-radius:13px;background:rgba(255,204,0,.07);border:1px solid rgba(255,204,0,.2);padding:14px}
+.dr-access-card h4{font-family:var(--head);font-size:13px;font-weight:700;margin-bottom:3px}
+.dr-access-card p{font-size:12px;color:var(--muted)}
+
+/* ── MAIN ── */
+main{padding:74px 16px 90px;max-width:640px;margin:0 auto}
+
+/* ── AUTH VIEW ── */
+#v-auth{text-align:center;padding:50px 0 30px}
+.auth-logo{font-family:var(--head);font-size:38px;font-weight:800;margin-bottom:6px}
+.auth-logo em{color:var(--accent);font-style:normal}
+.form-row{margin-bottom:14px}
+.fi{width:100%;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--accent)}
+.fi::placeholder{color:var(--muted)}
+.divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;border-radius:13px;border:1px solid var(--border);background:var(--surf);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .18s;margin-bottom:10px}
+.btn-google:hover{border-color:rgba(255,255,255,.2);background:var(--card)}
+.btn-google:active{transform:scale(.97)}
+
+/* ── GATE VIEW ── */
+#v-gate{}
+.gate-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.3);border-radius:30px;padding:5px 13px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:20px}
+.gate-title{font-family:var(--head);font-size:clamp(26px,7vw,40px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:14px}
+.gate-title em{color:var(--accent);font-style:normal}
+.gate-sub{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:28px}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px 22px;margin-bottom:20px;position:relative;overflow:hidden}
+.price-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.price-num{font-family:var(--head);font-size:40px;font-weight:800;letter-spacing:-2px}
+.price-usd{font-size:13px;color:var(--muted);margin-top:2px}
+.feat-list{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:9px}
+.feat-list li{display:flex;align-items:center;gap:9px;font-size:13px}
+.feat-list li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0}
+.ref-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:11px 14px;margin-bottom:18px}
+.ref-input-wrap input{background:none;border:none;outline:none;font-size:13px;color:var(--text);flex:1;font-family:var(--font)}
+.ref-input-wrap input::placeholder{color:var(--muted)}
+
+/* Buy Now button on gate page */
+.buy-now-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:18px 20px;border-radius:14px;border:none;background:var(--accent);color:#000;font-size:18px;font-weight:800;cursor:pointer;font-family:var(--head);transition:all .18s;margin-bottom:12px;letter-spacing:-.3px}
+.buy-now-btn:active{transform:scale(.97)}
+.buy-now-btn:hover{background:#FFD700}
+
+/* Gate logout button */
+.gate-logout-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 20px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .18s;margin-top:8px}
+.gate-logout-btn:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.08)}
+
+/* ── VAULT VIEW ── */
+#v-vault{}
+.vault-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.vault-hdr-title{font-family:var(--head);font-size:21px;font-weight:800}
+
+/* Referral section */
+.ref-sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:22px}
+.ref-sec h3{font-family:var(--head);font-size:15px;font-weight:700;margin-bottom:5px}
+.ref-sec p{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+.ref-link-box{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--accent);display:flex;align-items:center;gap:8px;font-family:monospace}
+.ref-link-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:var(--accent);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:var(--font)}
+.ref-stats{display:flex;gap:10px;margin-top:12px}
+.ref-stat{flex:1;background:var(--surf);border-radius:12px;padding:11px;text-align:center}
+.ref-sv{font-family:var(--head);font-size:20px;font-weight:800;color:var(--accent)}
+.ref-sl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Products grid */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s}
+.prod-card:active{transform:scale(.97)}
+.prod-card:hover{border-color:rgba(255,204,0,.3)}
+.prod-img{width:100%;height:120px;object-fit:cover;background:var(--surf);display:flex;align-items:center;justify-content:center}
+.prod-img img{width:100%;height:100%;object-fit:cover}
+.prod-body{padding:11px 12px 0}
+.prod-type{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.prod-name{font-family:var(--head);font-size:13px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prod-acts{padding:10px 12px;display:flex;gap:6px;flex-wrap:wrap}
+.act-btn{flex:1;padding:7px 5px;border-radius:9px;border:none;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:3px;transition:all .12s}
+.act-btn:active{transform:scale(.95)}
+.btn-dl{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.btn-lk{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:var(--blue)}
+.btn-pub{background:rgba(255,204,0,.12);border:1px solid rgba(255,204,0,.3);color:var(--accent)}
+
+/* ── BTNS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px 20px;border-radius:13px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);transition:all .18s;width:100%}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:active{transform:scale(.97)}
+.btn-sec{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:10px}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(7,8,12,.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:7px 0 calc(7px + env(safe-area-inset-bottom,0px))}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:5px;transition:all .15s}
+.bnav-item.on .bni svg{stroke:var(--accent)}
+.bnav-item.on .bnl{color:var(--accent)}
+.bni{line-height:1;display:flex;align-items:center;justify-content:center}
+.bni svg{width:22px;height:22px;stroke:var(--muted);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.bnl{font-size:10px;font-weight:600;color:var(--muted)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(16px);background:#1a2030;border:1px solid var(--border);border-radius:13px;padding:11px 18px;font-size:13px;font-weight:600;z-index:500;opacity:0;pointer-events:none;transition:all .3s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(34,197,94,.4);color:var(--green)}
+.toast.err{border-color:rgba(239,68,68,.4);color:var(--red)}
+
+/* ── SKELETON ── */
+.sk{background:linear-gradient(90deg,var(--surf) 25%,var(--card) 50%,var(--surf) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:12px}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-card{height:190px;border-radius:var(--r)}
+
+/* ── SPINNER ── */
+.spin{width:18px;height:18px;border:2px solid rgba(255,204,0,.2);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── PULSE ── */
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pls 2s infinite}
+
+/* ── SMOOTH PAGE TRANSITIONS ── */
+main{transition:opacity .22s ease}
+main.fading{opacity:0}
+.dr-item,.bnav-item,.buy-now-btn,.gate-logout-btn,.btn,.btn-google,.copy-btn{transition:all .18s ease}
+
+.empty{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1}
+.empty-ic{display:flex;justify-content:center;margin-bottom:10px}
+.empty-t{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Sellizi <em>Vault</em></div>
+  <div class="nav-r">
+    <span class="access-chip chip-locked" id="access-chip"></span>
+    <!-- hamburger: only shown when logged in -->
+    <button class="ham" id="ham-btn" onclick="drOpen()" aria-label="Menu" style="display:none">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- DRAWER -->
+<div class="ov" id="dr-ov" onclick="drClose()"></div>
+<div class="dr" id="dr">
+  <div class="dr-head">
+    <button class="dr-close" onclick="drClose()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div style="font-family:var(--head);font-weight:800;font-size:17px">Menu</div>
+    <div class="dr-user" id="dr-user" style="display:none">
+      <div class="dr-av" id="dr-av">?</div>
+      <div>
+        <div class="dr-name" id="dr-nm">—</div>
+        <div class="dr-email" id="dr-em">—</div>
+      </div>
+    </div>
+  </div>
+  <!-- Access status card -->
+  <div class="dr-access-card" id="dr-acc-card" style="display:none">
+    <h4 id="dr-acc-title">No Access</h4>
+    <p id="dr-acc-sub">Pay 2,300 XAF to unlock all products.</p>
+  </div>
+  <div class="dr-sec">Navigate</div>
+  <div class="dr-item" onclick="showV('vault');drClose()">
+    <span class="dr-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span> Vault Products
+  </div>
+  <div class="dr-item" onclick="showV('referral');drClose()">
+    <span class="dr-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> My Referral Link
+  </div>
+  <div class="dr-item" id="dr-upgrade" style="display:none" onclick="showV('gate');drClose()">
+    <span class="dr-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Get Access — 2,300 XAF
+  </div>
+  <div class="dr-sec">Account</div>
+  <div class="dr-item" onclick="signOut()">
+    <span class="dr-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Sign Out
+  </div>
+  <div class="dr-item" onclick="goSellizi()">
+    <span class="dr-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span> Back to Sellizi
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+<!-- AUTH -->
+<div id="v-auth" style="display:none">
+  <div class="auth-logo">Sellizi <em>Vault</em></div>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:28px">Sign in with your Sellizi account or create one</p>
+
+  <!-- Google Sign In -->
+  <button class="btn-google" onclick="signInGoogle()">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+
+  <div class="divider">or</div>
+
+  <div class="form-row"><input class="fi" type="email" id="a-email" placeholder="Email address"></div>
+  <div class="form-row" style="margin-bottom:20px"><input class="fi" type="password" id="a-pass" placeholder="Password (min 6 characters)"></div>
+  <button class="btn btn-primary" id="btn-in" onclick="signIn()" style="margin-bottom:10px">
+    <span id="spin-in" class="spin" style="display:none"></span> Sign In
+  </button>
+  <button class="btn btn-sec" id="btn-up" onclick="signUp()">
+    <span id="spin-up" class="spin" style="display:none"></span> Create Account
+  </button>
+  <p style="font-size:12px;color:var(--muted);margin-top:18px">Your Sellizi account works here too — same email & password.</p>
+</div>
+
+<!-- GATE (payment page) -->
+<div id="v-gate" style="display:none">
+  <div style="padding:50px 0 30px">
+    <div class="gate-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Premium Vault
+    </div>
+    <h1 class="gate-title">One-time access to <em>all</em> digital products</h1>
+    <p class="gate-sub">Pay once. Download ebooks, copy links, and publish any product on your Sellizi store — forever.</p>
+
+    <div class="price-card">
+      <div class="price-num" id="gate-price-main">2 300 <span style="font-size:19px;color:var(--muted)">XAF</span></div>
+      <div class="price-usd" id="gate-price-sub">one-time · lifetime access</div>
+      <ul class="feat-list">
+        <li>Unlimited downloads &amp; product links</li>
+        <li>Publish any product to your Sellizi store</li>
+        <li>30% referral commission (<span class="ref-xaf-val">690 XAF</span>/invite)</li>
+        <li>All future uploads included</li>
+      </ul>
+    </div>
+
+    <div class="ref-input-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <input type="text" id="ref-code" placeholder="Referral code (optional)">
+    </div>
+
+    <!-- Chariow widget slot -->
+    <div style="background:white;border-radius:var(--r);padding:20px;display:flex;justify-content:center;align-items:center;min-height:80px;margin-bottom:16px" id="chariow-slot">
+      <div id="chariow-widget"
+        data-product-id="prd_ss7k1hq1"
+        data-store-domain="mtmnaxem.mychariow.shop"
+        data-style="tap"
+        data-border-style="rounded"
+        data-cta-width="full"
+        data-background-color="#FFFFFF"
+        data-cta-animation="bounce_rotate"
+        data-locale="en"
+        data-primary-color="#FFCC00">
+      </div>
+    </div>
+
+    <!-- Big Buy Now button -->
+    <button class="buy-now-btn" onclick="triggerChariow()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Buy Now
+    </button>
+
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:3px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secure via Chariow · Access activated immediately after payment
+    </p>
+
+    <!-- Sign out button on payment page -->
+    <button class="gate-logout-btn" onclick="signOut()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</div>
+
+<!-- VAULT -->
+<div id="v-vault" style="display:none">
+  <div class="vault-hdr">
+    <div class="vault-hdr-title">Sellizi Vault</div>
+    <span class="access-chip chip-unlocked" style="display:flex"><span class="pulse" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px"></span>Unlocked</span>
+  </div>
+
+  <div class="ref-sec">
+    <h3>Earn 30% Per Referral</h3>
+    <p>Share your link — earn <strong style="color:var(--accent)" class="ref-xaf-val">690 XAF</strong> every time someone pays through it.</p>
+    <div class="ref-link-box">
+      <span class="ref-link-text" id="ref-url">Loading…</span>
+      <button class="copy-btn" onclick="copyRef()">Copy</button>
+    </div>
+    <div class="ref-stats">
+      <div class="ref-stat"><div class="ref-sv" id="r-cnt">0</div><div class="ref-sl">Referrals</div></div>
+      <div class="ref-stat"><div class="ref-sv" id="r-xaf">0</div><div class="ref-sl">XAF Earned</div></div>
+    </div>
+  </div>
+
+  <div class="prod-grid" id="prod-grid">
+    <div class="sk sk-card"></div>
+    <div class="sk sk-card"></div>
+    <div class="sk sk-card"></div>
+    <div class="sk sk-card"></div>
+  </div>
+</div>
+
+<!-- REFERRAL VIEW -->
+<div id="v-referral" style="display:none">
+  <h2 style="font-family:var(--head);font-size:22px;font-weight:800;margin-bottom:18px">Referral Program</h2>
+  <div class="ref-sec">
+    <h3>Earn 30% Commission</h3>
+    <p>Every friend who joins via your link earns you <strong style="color:var(--accent)" class="ref-xaf-val">690 XAF</strong>. No limit on referrals!</p>
+    <div class="ref-link-box" style="margin-top:12px">
+      <span class="ref-link-text" id="ref-url2">Loading…</span>
+      <button class="copy-btn" onclick="copyRef()">Copy</button>
+    </div>
+    <div class="ref-stats" style="margin-top:12px">
+      <div class="ref-stat"><div class="ref-sv" id="r-cnt2">0</div><div class="ref-sl">Referrals</div></div>
+      <div class="ref-stat"><div class="ref-sv" id="r-xaf2">0</div><div class="ref-sl">XAF Earned</div></div>
+    </div>
+  </div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+    <h3 style="font-family:var(--head);font-size:14px;font-weight:700;margin-bottom:10px">How payouts work</h3>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7">Commissions are tracked automatically in your Sellizi account balance. Withdraw from your Sellizi wallet once you reach <strong style="color:var(--accent)" class="withdraw-xaf-val">2,000 XAF</strong>.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- BOTTOM NAV (hidden until logged in with access) -->
+<div class="bnav" id="bnav" style="display:none">
+  <div class="bnav-item on" id="bn-vault" onclick="showV('vault')">
+    <div class="bni">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+    </div>
+    <div class="bnl">Vault</div>
+  </div>
+  <div class="bnav-item" id="bn-referral" onclick="showV('referral')">
+    <div class="bni">
+      <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </div>
+    <div class="bnl">Refer</div>
+  </div>
+  <div class="bnav-item" onclick="goSellizi()">
+    <div class="bni">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+    <div class="bnl">Sellizi</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   SAME SUPABASE as sellizi.store
+═══════════════════════════════════════════ */
+const SUPABASE_URL = 'https://fonnpcpdeubydvaanlmi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_H_r1syeJWpe7UOHhbxBicg_KUaWm8Xd';
+const VAULT_URL    = 'https://vault.sellizi.store';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ═══════════════════════════════════════════
+   CURRENCY SYSTEM (mirrors sellizi.store)
+═══════════════════════════════════════════ */
+const VAULT_PRICE_XAF = 2300;
+const REFERRAL_XAF    = 690;
+const WITHDRAW_XAF    = 2000;
+
+// Fallback rates (1 XAF = X currency) — same as sellizi.store
+const XAF_RATES_FALLBACK = {
+  XAF:1, XOF:1,
+  CDF:0.73, BIF:0.57, RWF:0.20, STN:0.034,
+  AOA:0.13, NGN:0.26, GHS:0.023, GNF:0.14,
+  SLE:0.0037, GMD:0.11, LRD:0.028, CVE:0.016,
+  MRU:0.064, KES:0.023, TZS:0.41, UGX:0.61,
+  ETB:0.086, SOS:0.93, DJF:0.29, ERN:0.025,
+  SSP:2.15, ZMW:0.034, MWK:0.28, MZN:0.10,
+  MGA:0.71, KMF:1, SCR:0.023, MUR:0.073,
+  EGP:0.051, MAD:0.017, DZD:0.22, TND:0.0051,
+  LYD:0.0079, SDG:0.094, ZAR:0.030, ZWL:0.53,
+  BWP:0.023, NAD:0.030, LSL:0.030, SZL:0.030,
+  EUR:0.00152, CHF:0.00166, USD:0.00165, GBP:0.00130,
+  CAD:0.00226, AUD:0.00253, JPY:0.248, CNY:0.01195,
+  INR:0.1374, BRL:0.00834, MXN:0.03165, AED:0.00606,
+  SAR:0.00619, QAR:0.00601, KWD:0.000507, TRY:0.0529,
+};
+let XAF_RATES = { ...XAF_RATES_FALLBACK };
+
+// Read currency from localStorage (set by sellizi.store) — default XAF
+const _savedCur = (() => { try { return JSON.parse(localStorage.getItem('sellizi_currency')); } catch(_){ return null; } })();
+let activeCurrency = _savedCur || { cur: 'XAF', sym: 'F CFA' };
+
+async function fetchLiveRates() {
+  const SIX_HOURS = 6 * 60 * 60 * 1000;
+  try {
+    const cached = JSON.parse(localStorage.getItem('_sz_rates') || 'null');
+    if (cached && cached.ts && (Date.now() - cached.ts < SIX_HOURS) && cached.rates) {
+      XAF_RATES = cached.rates; return;
+    }
+  } catch(_) {}
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/XAF', { signal: AbortSignal.timeout(6000) });
+    const data = await res.json();
+    if (data.result === 'success' && data.rates) {
+      XAF_RATES = { ...XAF_RATES_FALLBACK, ...data.rates };
+      try { localStorage.setItem('_sz_rates', JSON.stringify({ rates: XAF_RATES, ts: Date.now() })); } catch(_) {}
+    }
+  } catch(_) {}
+}
+
+function convertFromXAF(amountXAF) {
+  const rate = XAF_RATES[activeCurrency.cur] || 1;
+  return (amountXAF || 0) * rate;
+}
+
+const NO_DECIMALS = ['XAF','XOF','CDF','BIF','RWF','GNF','UGX','TZS','SOS','SSP','ZWL','MGA','KMF','NGN','LRD'];
+function fmtVaultPrice(xaf) {
+  const converted = convertFromXAF(xaf);
+  const cur = activeCurrency.cur;
+  const sym = activeCurrency.sym;
+  const dec = NO_DECIMALS.includes(cur) ? 0 : 2;
+  const formatted = converted.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return formatted + ' ' + sym;
+}
+
+function updatePriceDisplay() {
+  const cur = activeCurrency.cur;
+  const isXAF = cur === 'XAF';
+  const mainPrice = fmtVaultPrice(VAULT_PRICE_XAF);
+  const el = document.getElementById('gate-price-main');
+  if (el) {
+    if (isXAF) {
+      el.innerHTML = `2 300 <span style="font-size:19px;color:var(--muted)">XAF</span>`;
+    } else {
+      el.innerHTML = `${mainPrice}`;
+      el.style.fontSize = mainPrice.length > 12 ? '28px' : '40px';
+    }
+  }
+  const sub = document.getElementById('gate-price-sub');
+  if (sub) {
+    sub.textContent = isXAF
+      ? 'one-time · lifetime access'
+      : `≈ 2,300 XAF · one-time · lifetime access`;
+  }
+  // Update referral text everywhere
+  const refXAF = document.querySelectorAll('.ref-xaf-val');
+  refXAF.forEach(el => { el.textContent = fmtVaultPrice(REFERRAL_XAF); });
+  const wdXAF = document.querySelectorAll('.withdraw-xaf-val');
+  wdXAF.forEach(el => { el.textContent = fmtVaultPrice(WITHDRAW_XAF); });
+}
+
+// Fetch live rates then update display
+fetchLiveRates().then(() => updatePriceDisplay());
+
+// Also watch if user changes currency on sellizi.store in another tab
+window.addEventListener('storage', (e) => {
+  if (e.key === 'sellizi_currency') {
+    try {
+      const nc = JSON.parse(e.newValue);
+      if (nc && nc.cur) { activeCurrency = nc; updatePriceDisplay(); }
+    } catch(_) {}
+  }
+});
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let _user = null, _access = false, _refCode = null;
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+async function init() {
+  // 1) Check hash for token passed by sellizi.store openVault()
+  const hash = window.location.hash;
+  if (hash.includes('vault_token=')) {
+    const hp = new URLSearchParams(hash.replace('#',''));
+    const at = hp.get('vault_token');
+    const rt = hp.get('vault_refresh');
+    if (at && rt) {
+      try {
+        const { data, error } = await sb.auth.setSession({ access_token: at, refresh_token: rt });
+        if (data?.session) { _user = data.session.user; }
+      } catch(_){}
+    }
+    history.replaceState({}, '', window.location.pathname + window.location.search);
+  }
+
+  // 2) Check for payment success redirect from Chariow
+  const params = new URLSearchParams(location.search);
+  const payOk = params.get('payment') === 'success' && params.get('hub') === '1';
+  const uidParam = params.get('uid');
+  const refParam = params.get('hub_ref');
+  if (payOk) history.replaceState({}, '', location.pathname);
+
+  // 3) Check ref code in URL
+  const refInUrl = params.get('hub_ref') || params.get('ref');
+  if (refInUrl) {
+    localStorage.setItem('vaultRef', refInUrl);
+    document.getElementById('ref-code').value = refInUrl;
+  }
+
+  // 4) Try existing session
+  if (!_user) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) _user = session.user;
+  }
+
+  if (_user) {
+    try {
+      await loadProfile();
+      if (payOk) {
+        await grantAccess(_user.id, uidParam, refParam || localStorage.getItem('vaultRef'));
+      }
+    } catch(e) { console.warn('loadProfile error', e); }
+    renderAuthed();
+  } else {
+    showV('auth');
+  }
+
+  // Auth state changes
+  sb.auth.onAuthStateChange(async (ev, sess) => {
+    if (ev === 'SIGNED_IN' && sess) {
+      _user = sess.user;
+      await loadProfile();
+      renderAuthed();
+    } else if (ev === 'SIGNED_OUT') {
+      _user = null; _access = false;
+      showV('auth');
+      document.getElementById('bnav').style.display = 'none';
+      document.getElementById('ham-btn').style.display = 'none';
+      document.getElementById('access-chip').style.display = 'none';
+    }
+  });
+
+  // Reinit Chariow widget
+  setTimeout(() => {
+    if (window.Chariow) {
+      if (typeof window.Chariow.init === 'function') window.Chariow.init();
+      else if (typeof window.Chariow.mount === 'function') window.Chariow.mount();
+    }
+    const uid = _user ? _user.id : '';
+    const ref = localStorage.getItem('vaultRef') || '';
+    const successUrl = VAULT_URL + '?payment=success&hub=1&uid=' + encodeURIComponent(uid) + (ref ? '&hub_ref=' + encodeURIComponent(ref) : '');
+    const w = document.getElementById('chariow-widget');
+    if (w) w.setAttribute('data-success-url', successUrl);
+  }, 800);
+}
+
+async function loadProfile() {
+  if (!_user) return;
+  try {
+    const { data } = await sb.from('hub_access').select('id').eq('user_id', _user.id);
+    _access = !!(data && data.length > 0);
+  } catch(_) { _access = false; }
+  _refCode = _user.id;
+  // Load user's currency preference from DB
+  try {
+    const { data: udata } = await sb.from('users').select('currency').eq('id', _user.id).single();
+    if (udata && udata.currency && udata.currency !== activeCurrency.cur) {
+      const cur = udata.currency;
+      const knownSyms = { XAF:'F CFA', XOF:'F CFA', EUR:'€', USD:'$', GBP:'£', CAD:'CA$', AUD:'A$', JPY:'¥', CNY:'¥', NGN:'₦', KES:'KSh', GHS:'₵', ZAR:'R', EGP:'E£', MAD:'MAD', TND:'DT', DZD:'DA' };
+      const sym = knownSyms[cur] || cur;
+      activeCurrency = { cur, sym };
+      try { localStorage.setItem('sellizi_currency', JSON.stringify(activeCurrency)); } catch(_) {}
+    }
+  } catch(_) {} // users table may not exist in vault DB — that's fine
+  updatePriceDisplay();
+}
+
+function renderAuthed() {
+  // Show hamburger only when logged in
+  document.getElementById('ham-btn').style.display = 'flex';
+
+  // Nav chip
+  const chip = document.getElementById('access-chip');
+  chip.style.display = 'flex';
+  if (_access) {
+    chip.className = 'access-chip chip-unlocked';
+    chip.textContent = '✓ Access';
+  } else {
+    chip.className = 'access-chip chip-locked';
+    chip.textContent = 'No Access';
+  }
+
+  // Drawer
+  document.getElementById('dr-user').style.display = 'flex';
+  document.getElementById('dr-av').textContent = (_user.email||'?')[0].toUpperCase();
+  document.getElementById('dr-nm').textContent = (_user.email||'').split('@')[0];
+  document.getElementById('dr-em').textContent = _user.email||'';
+  document.getElementById('dr-acc-card').style.display = 'block';
+  if (_access) {
+    document.getElementById('dr-acc-title').innerHTML = '<span class="pulse" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px"></span> Access Active';
+    document.getElementById('dr-acc-sub').textContent = 'You have full vault access!';
+    document.getElementById('dr-upgrade').style.display = 'none';
+    // Show hamburger, tabs + nav only after payment
+    document.getElementById('ham-btn').style.display = 'flex';
+    document.getElementById('bnav').style.display = 'flex';
+    showV('vault');
+    loadProducts();
+    loadRefStats();
+  } else {
+    document.getElementById('dr-acc-title').textContent = 'No Access';
+    document.getElementById('dr-acc-sub').textContent = 'Pay 2,300 XAF to unlock all products.';
+    document.getElementById('dr-upgrade').style.display = 'flex';
+    // Hide hamburger and bottom nav on payment page
+    document.getElementById('ham-btn').style.display = 'none';
+    document.getElementById('bnav').style.display = 'none';
+    showV('gate');
+    const ref = localStorage.getItem('vaultRef') || document.getElementById('ref-code').value || '';
+    const successUrl = VAULT_URL + '?payment=success&hub=1&uid=' + encodeURIComponent(_user.id) + (ref ? '&hub_ref=' + encodeURIComponent(ref) : '');
+    const w = document.getElementById('chariow-widget');
+    if (w) w.setAttribute('data-success-url', successUrl);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+async function signIn() {
+  const email = document.getElementById('a-email').value.trim();
+  const pass  = document.getElementById('a-pass').value;
+  if (!email || !pass) return toast('Fill in email and password', 'err');
+  setSpin('spin-in', 'btn-in', true);
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) { toast(error.message, 'err'); return; }
+    if (data?.user) {
+      _user = data.user;
+      await loadProfile();
+      renderAuthed();
+    }
+  } catch(e) {
+    toast('Login failed. Try again.', 'err');
+  } finally {
+    setSpin('spin-in', 'btn-in', false);
+  }
+}
+
+async function signUp() {
+  const email = document.getElementById('a-email').value.trim();
+  const pass  = document.getElementById('a-pass').value;
+  if (!email || !pass) return toast('Fill in email and password', 'err');
+  if (pass.length < 6) return toast('Password must be 6+ characters', 'err');
+  setSpin('spin-up', 'btn-up', true);
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password: pass });
+    if (error) { toast(error.message, 'err'); return; }
+    // If email confirmation is disabled, user is immediately signed in
+    if (data?.session && data?.user) {
+      _user = data.user;
+      await loadProfile();
+      renderAuthed();
+    } else {
+      toast('Account created! Check your email to confirm.', 'ok');
+    }
+  } catch(e) {
+    toast('Sign up failed. Try again.', 'err');
+  } finally {
+    setSpin('spin-up', 'btn-up', false);
+  }
+}
+
+async function signInGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: VAULT_URL }
+  });
+  if (error) toast(error.message, 'err');
+}
+/* ═══════════════════════════════════════════
+   CHARIOW TRIGGER
+═══════════════════════════════════════════ */
+function triggerChariow() {
+  // Try to click the Chariow widget button
+  const w = document.querySelector('#chariow-widget [data-chariow-btn], #chariow-widget button, #chariow-slot button');
+  if (w) { w.click(); return; }
+  // Fallback: open payment directly
+  toast('Opening payment…', 'ok');
+  const slot = document.getElementById('chariow-slot');
+  if (slot) slot.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ═══════════════════════════════════════════
+   GRANT ACCESS (after Chariow payment)
+═══════════════════════════════════════════ */
+async function grantAccess(userId, uidParam, referrerId) {
+  const uid = userId || uidParam;
+  if (!uid) return;
+  const { data: ex } = await sb.from('hub_access').select('id').eq('user_id', uid);
+  if (ex && ex.length > 0) { unlockUI(); return; }
+  const { error } = await sb.from('hub_access').insert({
+    user_id: uid,
+    granted_at: new Date().toISOString(),
+    granted_by_admin: false
+  });
+  if (error) { toast('Access setup failed — contact support', 'err'); return; }
+  if (referrerId && referrerId !== uid) {
+    await sb.from('hub_referral_earnings').insert({
+      referrer_id: referrerId,
+      referred_user_id: uid,
+      amount: 690,
+      earned_at: new Date().toISOString()
+    }).catch(()=>{});
+    await sb.rpc('increment_balance', { uid: referrerId, amount: 690 }).catch(()=>{});
+  }
+  localStorage.removeItem('vaultRef');
+  _access = true;
+  unlockUI();
+}
+
+function unlockUI() {
+  _access = true;
+  toast('Access granted! Welcome to the Vault!', 'ok');
+  // Show hamburger + bottom nav now that access is granted
+  document.getElementById('ham-btn').style.display = 'flex';
+  document.getElementById('bnav').style.display = 'flex';
+  renderAuthed();
+  loadProducts();
+  loadRefStats();
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCTS
+═══════════════════════════════════════════ */
+const PROD_ICONS = {
+  file: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  link: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  ebook: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  course: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+  template: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,
+  software: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>`,
+  default: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`
+};
+
+const DL_ICON = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+const LK_ICON = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+const PUB_ICON = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`;
+const EMPTY_ICON = `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`;
+
+async function loadProducts() {
+  const { data: prods } = await sb.from('hub_products').select('*').order('created_at', { ascending: false });
+  const grid = document.getElementById('prod-grid');
+  if (!prods || !prods.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-ic">${EMPTY_ICON}</div><div class="empty-t">No products yet</div><div>Admin will upload products soon</div></div>`;
+    return;
+  }
+  grid.innerHTML = prods.map(p => {
+    const ic = PROD_ICONS[p.type] || PROD_ICONS.default;
+    const img = p.image_url
+      ? `<div class="prod-img"><img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy"></div>`
+      : `<div class="prod-img">${ic}</div>`;
+    const dl = p.file_url ? `<button class="act-btn btn-dl" onclick="event.stopPropagation();dlProd('${p.id}','${esc(p.name)}')">${DL_ICON} Download</button>` : '';
+    const lk = p.link_url ? `<button class="act-btn btn-lk" onclick="event.stopPropagation();copyLink('${esc(p.link_url)}')">${LK_ICON} Copy</button>` : '';
+    const pub = `<button class="act-btn btn-pub" onclick="event.stopPropagation();publishProd('${esc(p.name)}','${esc(p.short_desc||'')}')">${PUB_ICON} Sell</button>`;
+    return `<div class="prod-card">
+      ${img}
+      <div class="prod-body">
+        <div class="prod-type">${(p.type||'other').toUpperCase()}</div>
+        <div class="prod-name">${esc(p.name)}</div>
+      </div>
+      <div class="prod-acts">${dl}${lk}${pub}</div>
+    </div>`;
+  }).join('');
+}
+
+let _prods = [];
+async function loadProductsWithStore() {
+  const { data } = await sb.from('hub_products').select('*').order('created_at',{ascending:false});
+  _prods = data || [];
+  return _prods;
+}
+
+function dlProd(id, name) {
+  const p = _prods.find(x=>x.id===id);
+  if (p && p.file_url) {
+    const a = document.createElement('a'); a.href=p.file_url; a.download=name||'file'; a.target='_blank'; a.click();
+    toast('Download started!', 'ok');
+  } else {
+    sb.from('hub_products').select('file_url').eq('id',id).single().then(({data:row})=>{
+      if (row && row.file_url) { const a=document.createElement('a');a.href=row.file_url;a.download=name;a.target='_blank';a.click(); toast('Download started!','ok'); }
+    });
+  }
+}
+function copyLink(url) {
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(()=>toast('Link copied!','ok')).catch(()=>fbCopy(url));
+  else fbCopy(url);
+}
+function fbCopy(text) {
+  const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  toast('Link copied!','ok');
+}
+function publishProd(name, desc) {
+  const u = `https://sellizi.store/?page=sell&title=${encodeURIComponent(name)}&desc=${encodeURIComponent(desc)}`;
+  window.open(u,'_blank');
+  toast('Opening Sellizi sell page…','ok');
+}
+
+/* ═══════════════════════════════════════════
+   REFERRAL
+═══════════════════════════════════════════ */
+async function loadRefStats() {
+  if (!_user) return;
+  const refUrl = VAULT_URL + '?ref=' + _user.id;
+  ['ref-url','ref-url2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=refUrl; });
+  const { data: refs } = await sb.from('hub_referral_earnings').select('amount').eq('referrer_id', _user.id);
+  const count = refs ? refs.length : 0;
+  const earned = refs ? refs.reduce((s,r)=>s+(r.amount||0),0) : 0;
+  ['r-cnt','r-cnt2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=count; });
+  ['r-xaf','r-xaf2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=earned.toLocaleString(); });
+}
+function copyRef() {
+  if (!_user) return;
+  copyLink(VAULT_URL + '?ref=' + _user.id);
+}
+
+/* ═══════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════ */
+function showV(v) {
+  ['auth','gate','vault','referral'].forEach(x => {
+    const el = document.getElementById('v-'+x);
+    if (el) el.style.display = x===v ? 'block' : 'none';
+  });
+  // Update bottom nav active state
+  ['vault','referral'].forEach(x => {
+    const el = document.getElementById('bn-'+x);
+    if (el) el.classList.toggle('on', x===v);
+  });
+  if (v==='referral') loadRefStats();
+  window.scrollTo(0,0);
+}
+function drOpen() { document.getElementById('dr').classList.add('on'); document.getElementById('dr-ov').classList.add('on'); }
+function drClose() { document.getElementById('dr').classList.remove('on'); document.getElementById('dr-ov').classList.remove('on'); }
+
+let _tTimer;
+function toast(msg, type='') {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show '+(type||'');
+  clearTimeout(_tTimer); _tTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+function setSpin(spinId, btnId, on) {
+  const s=document.getElementById(spinId); if(s) s.style.display=on?'inline-block':'none';
+}
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+async function _vaultReady() {
+  await loadProductsWithStore();
+  loadProducts();
+}
+
+/* ═══════════════════════════════════════════
+   SMOOTH NAVIGATION HELPERS
+═══════════════════════════════════════════ */
+function goSellizi() {
+  drClose();
+  const m = document.querySelector('main');
+  m.classList.add('fading');
+  setTimeout(() => { window.location.href = 'https://sellizi.store/#home'; }, 200);
+}
+
+async function signOut() {
+  drClose();
+  const m = document.querySelector('main');
+  m.classList.add('fading');
+  setTimeout(async () => {
+    await sb.auth.signOut();
+    m.classList.remove('fading');
+  }, 200);
+}
+
+// Init
+init().then(()=>{ if(_access) _vaultReady(); });
+</script>
+</body>
+</html>
