@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sellizi Vault — Digital Products</title>
+<meta name="description" content="Sellizi Vault — premium digital products for members.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ══════════════════════════════════
+   DARK LUXURY FINTECH — TOKENS
+══════════════════════════════════ */
+:root{
+  --bg:#080B14;
+  --bg2:#0B0F1C;
+  --surf:#0F1526;
+  --card:#131A2B;
+  --card2:#192038;
+  --glass:rgba(13,18,35,0.75);
+  --border:rgba(80,90,160,0.15);
+  --border2:rgba(100,110,200,0.25);
+  --border-glow:rgba(108,99,255,0.4);
+  --accent:#FFCC00;
+  --accent2:#FF8C42;
+  --violet:#9D8FFF;
+  --violet2:#6C63FF;
+  --electric:#4F8EFF;
+  --icy:#7EC8E3;
+  --green:#22C55E;
+  --red:#EF4444;
+  --blue:#4F8EFF;
+  --text:#E8EAF6;
+  --text2:#B0BAD4;
+  --muted:#6B74A0;
+  --muted2:#8892BA;
+  --r:18px;--r2:24px;--r3:14px;
+  --font:'DM Sans',sans-serif;
+  --head:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+
+/* Ambient glow orbs */
+body::before{
+  content:'';position:fixed;top:-25%;left:-15%;
+  width:65%;height:65%;
+  background:radial-gradient(ellipse,rgba(108,99,255,0.07) 0%,transparent 68%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;bottom:-20%;right:-15%;
+  width:55%;height:55%;
+  background:radial-gradient(ellipse,rgba(79,142,255,0.06) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;
+  background:rgba(8,11,20,0.88);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:var(--head);font-size:19px;font-weight:800;letter-spacing:-.5px}
+.logo-main{
+  background:linear-gradient(135deg,#E8EAF6 30%,var(--violet) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo em{
+  background:linear-gradient(135deg,var(--accent) 0%,#FFB800 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-style:normal;
+}
+.nav-r{display:flex;align-items:center;gap:10px}
+.access-chip{font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;display:none;align-items:center;gap:5px}
+.chip-locked{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.chip-unlocked{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.ham{
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:10px;cursor:pointer;display:none;
+  flex-direction:column;gap:4px;padding:8px;
+  box-shadow:4px 4px 10px rgba(0,0,0,.45),-2px -2px 6px rgba(255,255,255,.03);
+}
+.ham span{display:block;width:18px;height:2px;background:var(--text2);border-radius:2px}
+.ham.visible{display:flex}
+
+/* ── DRAWER ── */
+.ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:all}
+.dr{
+  position:fixed;top:0;right:-100%;width:min(300px,88vw);height:100%;z-index:201;
+  background:linear-gradient(160deg,rgba(11,15,28,0.98) 0%,rgba(15,21,38,0.98) 100%);
+  border-left:1px solid var(--border2);
+  transition:right .33s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;padding-bottom:40px;
+  backdrop-filter:blur(24px);
+}
+.dr.on{right:0}
+.dr-head{
+  padding:22px 18px 14px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(108,99,255,0.06) 0%,transparent 100%);
+}
+.dr-close{
+  float:right;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:8px;color:var(--muted2);font-size:14px;
+  cursor:pointer;line-height:1;padding:6px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.dr-close:hover{border-color:var(--border-glow);color:var(--text)}
+.dr-user{display:flex;align-items:center;gap:11px;margin-top:16px}
+.dr-av{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet2),var(--electric));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:17px;color:#fff;
+  box-shadow:0 4px 16px rgba(108,99,255,.35);
+}
+.dr-name{font-weight:700;font-size:14px;color:var(--text)}
+.dr-email{font-size:12px;color:var(--muted2);margin-top:2px}
+.dr-sec{padding:14px 18px 6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px}
+.dr-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;font-size:14px;font-weight:500;
+  cursor:pointer;transition:all .15s;color:var(--text2);
+}
+.dr-item:hover{background:rgba(108,99,255,.06);color:var(--text)}
+.dr-item .dr-ic{
+  width:30px;height:30px;text-align:center;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:var(--card2);border-radius:9px;border:1px solid var(--border);
+}
+.dr-access-card{
+  margin:14px;border-radius:var(--r3);
+  background:linear-gradient(135deg,rgba(108,99,255,.1) 0%,rgba(79,142,255,.07) 100%);
+  border:1px solid rgba(108,99,255,.25);padding:14px;
+}
+.dr-access-card h4{font-family:var(--head);font-size:13px;font-weight:700;margin-bottom:3px;color:var(--text)}
+.dr-access-card p{font-size:12px;color:var(--muted2)}
+
+/* ── MAIN ── */
+main{padding:74px 16px 96px;max-width:640px;margin:0 auto;position:relative;z-index:1}
+main{transition:opacity .22s ease}
+main.fading{opacity:0}
+
+/* ── AUTH VIEW ── */
+#v-auth{text-align:center;padding:50px 0 30px}
+.auth-logo{font-family:var(--head);font-size:38px;font-weight:800;margin-bottom:6px}
+.auth-logo-main{
+  background:linear-gradient(135deg,#E8EAF6 30%,var(--violet) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.auth-logo em{
+  background:linear-gradient(135deg,var(--accent),#FFB800);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-style:normal;
+}
+.form-row{margin-bottom:14px}
+.fi{
+  width:100%;
+  background:rgba(15,21,38,0.8);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:13px 15px;
+  color:var(--text);font-size:14px;font-family:var(--font);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  backdrop-filter:blur(10px);
+}
+.fi:focus{border-color:rgba(108,99,255,.5);box-shadow:0 0 0 3px rgba(108,99,255,.1)}
+.fi::placeholder{color:var(--muted)}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-google{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:14px 20px;border-radius:14px;
+  border:1px solid var(--border2);
+  background:rgba(15,21,38,0.8);
+  color:var(--text);font-size:14px;font-weight:600;
+  cursor:pointer;font-family:var(--font);transition:all .18s;margin-bottom:10px;
+  backdrop-filter:blur(10px);
+}
+.btn-google:hover{border-color:var(--border-glow);background:var(--card2)}
+.btn-google:active{transform:scale(.97)}
+
+/* ── GATE VIEW ── */
+.gate-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.3);
+  border-radius:30px;padding:5px 13px;font-size:12px;font-weight:700;
+  color:var(--accent);margin-bottom:20px;
+}
+.gate-title{font-family:var(--head);font-size:clamp(26px,7vw,40px);font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:14px}
+.gate-title em{color:var(--accent);font-style:normal}
+.gate-sub{font-size:14px;color:var(--muted2);line-height:1.65;margin-bottom:28px}
+.price-card{
+  background:linear-gradient(135deg,rgba(19,26,43,0.95) 0%,rgba(25,32,56,0.95) 100%);
+  border:1px solid var(--border2);
+  border-radius:var(--r);padding:26px 22px;margin-bottom:20px;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(108,99,255,.08);
+  backdrop-filter:blur(16px);
+}
+.price-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--violet2),var(--electric),var(--icy));
+}
+.price-num{font-family:var(--head);font-size:40px;font-weight:800;letter-spacing:-2px;color:var(--text)}
+.price-usd{font-size:13px;color:var(--muted2);margin-top:2px}
+.feat-list{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.feat-list li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--text2)}
+.feat-list li::before{
+  content:'✓';
+  background:linear-gradient(135deg,var(--violet2),var(--electric));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-weight:800;flex-shrink:0;
+}
+.ref-input-wrap{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(15,21,38,0.8);
+  border:1px solid var(--border2);
+  border-radius:14px;padding:12px 15px;margin-bottom:18px;
+  backdrop-filter:blur(10px);
+}
+.ref-input-wrap input{background:none;border:none;outline:none;font-size:13px;color:var(--text);flex:1;font-family:var(--font)}
+.ref-input-wrap input::placeholder{color:var(--muted)}
+
+.buy-now-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:18px 20px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,var(--accent) 0%,#FFB800 100%);
+  color:#000;font-size:18px;font-weight:800;cursor:pointer;
+  font-family:var(--head);transition:all .18s;margin-bottom:12px;
+  letter-spacing:-.3px;
+  box-shadow:0 4px 24px rgba(255,204,0,.3);
+}
+.buy-now-btn:active{transform:scale(.97)}
+.buy-now-btn:hover{box-shadow:0 6px 32px rgba(255,204,0,.45)}
+
+.gate-logout-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px 20px;border-radius:13px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;
+  font-family:var(--font);transition:all .18s;margin-top:8px;
+}
+.gate-logout-btn:hover{border-color:rgba(239,68,68,.4);color:var(--red);background:rgba(239,68,68,.06)}
+
+/* ── VAULT VIEW ── */
+.vault-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.vault-hdr-title{font-family:var(--head);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--text) 40%,var(--violet) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* Referral section */
+.ref-sec{
+  background:linear-gradient(135deg,rgba(19,26,43,0.9) 0%,rgba(25,32,56,0.9) 100%);
+  border:1px solid var(--border2);
+  border-radius:var(--r);padding:18px;margin-bottom:22px;
+  backdrop-filter:blur(16px);
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+}
+.ref-sec h3{font-family:var(--head);font-size:15px;font-weight:700;margin-bottom:5px;color:var(--text)}
+.ref-sec p{font-size:13px;color:var(--muted2);margin-bottom:12px;line-height:1.6}
+.ref-link-box{
+  background:rgba(8,11,20,0.7);
+  border:1px solid var(--border2);
+  border-radius:12px;padding:11px 13px;
+  font-size:12px;color:var(--electric);
+  display:flex;align-items:center;gap:8px;font-family:monospace;
+}
+.ref-link-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{
+  background:linear-gradient(135deg,var(--violet2),var(--electric));
+  color:#fff;border:none;border-radius:9px;
+  padding:7px 13px;font-size:11px;font-weight:700;
+  cursor:pointer;flex-shrink:0;font-family:var(--font);
+  box-shadow:0 2px 8px rgba(108,99,255,.3);
+  transition:all .15s;
+}
+.copy-btn:hover{box-shadow:0 4px 14px rgba(108,99,255,.5)}
+.copy-btn:active{transform:scale(.95)}
+.ref-stats{display:flex;gap:10px;margin-top:12px}
+.ref-stat{
+  flex:1;
+  background:rgba(8,11,20,0.6);
+  border:1px solid var(--border);
+  border-radius:13px;padding:12px;text-align:center;
+  backdrop-filter:blur(8px);
+}
+.ref-sv{
+  font-family:var(--head);font-size:20px;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),#FFB800);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ref-sl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Products grid */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prod-card{
+  background:linear-gradient(160deg,rgba(19,26,43,0.95) 0%,rgba(15,21,38,0.95) 100%);
+  border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+}
+.prod-card:active{transform:scale(.97)}
+.prod-card:hover{border-color:rgba(108,99,255,.35);box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 1px rgba(108,99,255,.15)}
+.prod-img{width:100%;height:120px;object-fit:cover;background:var(--card2);display:flex;align-items:center;justify-content:center}
+.prod-img img{width:100%;height:100%;object-fit:cover}
+.prod-body{padding:11px 12px 0}
+.prod-type{font-size:9px;font-weight:700;color:var(--violet);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.prod-name{font-family:var(--head);font-size:13px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text)}
+.prod-acts{padding:10px 12px;display:flex;gap:6px;flex-wrap:wrap}
+.act-btn{flex:1;padding:7px 5px;border-radius:10px;border:none;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:3px;transition:all .12s}
+.act-btn:active{transform:scale(.95)}
+.btn-dl{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+.btn-lk{background:rgba(79,142,255,.1);border:1px solid rgba(79,142,255,.25);color:var(--blue)}
+.btn-pub{background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.25);color:var(--accent)}
+.btn-see{background:rgba(157,143,255,.1);border:1px solid rgba(157,143,255,.25);color:var(--violet)}
+
+/* ── BTNS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px 20px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);transition:all .18s;width:100%}
+.btn-primary{
+  background:linear-gradient(135deg,var(--violet2),var(--electric));
+  color:#fff;box-shadow:0 4px 16px rgba(108,99,255,.3);
+}
+.btn-primary:active{transform:scale(.97)}
+.btn-sec{
+  background:rgba(19,26,43,0.8);color:var(--text);
+  border:1px solid var(--border2);backdrop-filter:blur(10px);
+}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto;border-radius:10px}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(8,11,20,0.95);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--border);
+  display:flex;padding:7px 0 calc(7px + env(safe-area-inset-bottom,0px));
+}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px;transition:all .15s}
+.bnav-item.on .bni svg{stroke:var(--violet)}
+.bnav-item.on .bnl{
+  background:linear-gradient(135deg,var(--violet),var(--electric));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.bni{line-height:1;display:flex;align-items:center;justify-content:center}
+.bni svg{width:22px;height:22px;stroke:var(--muted);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.bnl{font-size:10px;font-weight:600;color:var(--muted);transition:all .15s}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:calc(76px + env(safe-area-inset-bottom,0px));
+  left:50%;transform:translateX(-50%) translateY(16px);
+  background:rgba(15,21,38,0.95);
+  border:1px solid var(--border2);
+  border-radius:14px;padding:11px 18px;
+  font-size:13px;font-weight:600;z-index:500;
+  opacity:0;pointer-events:none;transition:all .3s;white-space:nowrap;
+  backdrop-filter:blur(16px);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(34,197,94,.4);color:var(--green)}
+.toast.err{border-color:rgba(239,68,68,.4);color:var(--red)}
+
+/* ── SKELETON ── */
+.sk{
+  background:linear-gradient(90deg,var(--surf) 25%,var(--card2) 50%,var(--surf) 75%);
+  background-size:200% 100%;animation:shim 1.6s infinite;border-radius:var(--r);
+}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-card{height:190px;border-radius:var(--r)}
+
+/* ── SPINNER ── */
+.spin{width:18px;height:18px;border:2px solid rgba(108,99,255,.2);border-top-color:var(--violet);border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── PULSE ── */
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pls 2s infinite}
+
+.empty{text-align:center;padding:50px 20px;color:var(--muted);grid-column:1/-1}
+.empty-ic{display:flex;justify-content:center;margin-bottom:10px}
+.empty-t{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:5px}
+
+/* ── PRODUCT DETAIL MODAL ── */
+.pdm-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;transition:opacity .25s;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.pdm-overlay.on{opacity:1;pointer-events:all}
+.pdm-sheet{
+  background:linear-gradient(160deg,rgba(11,15,28,0.99) 0%,rgba(15,21,38,0.99) 100%);
+  border-radius:26px 26px 0 0;
+  border:1px solid var(--border2);border-bottom:none;
+  width:100%;max-width:640px;max-height:92vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);
+  padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));
+  backdrop-filter:blur(24px);
+}
+.pdm-overlay.on .pdm-sheet{transform:translateY(0)}
+.pdm-handle{width:36px;height:4px;background:rgba(108,99,255,.3);border-radius:4px;margin:12px auto 0}
+.pdm-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px}
+.pdm-close{
+  background:rgba(108,99,255,.12);border:1px solid var(--border2);
+  color:var(--text2);width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;font-size:16px;transition:all .15s;
+}
+.pdm-close:hover{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:var(--red)}
+.pdm-close:active{transform:scale(.9)}
+.pdm-media{width:100%;max-height:240px;object-fit:cover;background:var(--card2)}
+.pdm-media-wrap{width:100%;background:var(--card2);display:flex;align-items:center;justify-content:center;min-height:140px;overflow:hidden;position:relative}
+.pdm-media-wrap iframe{width:100%;height:220px;border:none}
+.pdm-media-wrap video{width:100%;max-height:240px;outline:none}
+.pdm-media-wrap audio{width:calc(100% - 32px);margin:20px 16px}
+.pdm-media-wrap .pdm-file-icon{display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px 20px;color:var(--muted)}
+.pdm-media-wrap .pdm-file-icon svg{opacity:.6}
+.pdm-media-wrap .pdm-file-name{font-size:12px;word-break:break-all;text-align:center;color:var(--muted2);max-width:220px}
+.pdm-body{padding:16px 18px}
+.pdm-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(157,143,255,.1);border:1px solid rgba(157,143,255,.25);
+  border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;
+  color:var(--violet);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;
+}
+.pdm-title{font-family:var(--head);font-size:20px;font-weight:800;line-height:1.25;margin-bottom:8px;color:var(--text)}
+.pdm-desc{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:18px;white-space:pre-wrap}
+.pdm-section{margin-bottom:14px}
+.pdm-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.pdm-link-box{
+  background:rgba(8,11,20,0.7);border:1px solid var(--border2);
+  border-radius:12px;padding:11px 13px;
+  font-size:12px;color:var(--electric);
+  display:flex;align-items:center;gap:8px;font-family:monospace;
+  word-break:break-all;line-height:1.5;
+}
+.pdm-link-copy{
+  background:linear-gradient(135deg,var(--violet2),var(--electric));
+  color:#fff;border:none;border-radius:8px;
+  padding:5px 10px;font-size:11px;font-weight:700;
+  cursor:pointer;flex-shrink:0;font-family:var(--font);
+  box-shadow:0 2px 8px rgba(108,99,255,.3);transition:all .15s;
+}
+.pdm-link-copy:hover{box-shadow:0 4px 14px rgba(108,99,255,.5)}
+.pdm-link-copy:active{transform:scale(.95)}
+.pdm-actions{display:flex;flex-direction:column;gap:9px;padding:0 18px 4px}
+.pdm-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:var(--font);transition:all .18s;width:100%}
+.pdm-btn:active{transform:scale(.97)}
+.pdm-btn-dl{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+.pdm-btn-lk{background:rgba(79,142,255,.1);border:1px solid rgba(79,142,255,.25);color:var(--blue)}
+.pdm-btn-pub{background:rgba(255,204,0,.1);border:1px solid rgba(255,204,0,.25);color:var(--accent)}
+.pdm-btn-open{background:linear-gradient(135deg,var(--electric),var(--icy));color:#fff;box-shadow:0 4px 14px rgba(79,142,255,.3)}
+.pdm-divider{height:1px;background:var(--border);margin:14px 0}
+
+/* ── GLOBAL COPY BUTTON ── */
+.cpbtn{
+  background:rgba(108,99,255,.12);
+  border:1px solid rgba(108,99,255,.25);
+  border-radius:8px;color:var(--violet);
+  font-size:11px;font-weight:700;
+  padding:5px 10px;cursor:pointer;
+  font-family:var(--font);flex-shrink:0;
+  transition:all .15s;display:flex;align-items:center;gap:4px;
+}
+.cpbtn:hover{background:rgba(108,99,255,.22);border-color:rgba(108,99,255,.45)}
+.cpbtn:active{transform:scale(.95)}
+.cpbtn.copied{color:var(--green);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)}
+
+.dr-item,.bnav-item,.buy-now-btn,.gate-logout-btn,.btn,.btn-google,.copy-btn{transition:all .18s ease}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span class="logo-main">Sellizi</span> <em>Vault</em></div>
+  <div class="nav-r">
+    <span class="access-chip chip-locked" id="access-chip"></span>
+    <button class="ham" id="ham-btn" onclick="drOpen()" aria-label="Menu" style="display:none">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- DRAWER -->
+<div class="ov" id="dr-ov" onclick="drClose()"></div>
+<div class="dr" id="dr">
+  <div class="dr-head">
+    <button class="dr-close" onclick="drClose()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div style="font-family:var(--head);font-weight:800;font-size:17px;color:var(--text)">Menu</div>
+    <div class="dr-user" id="dr-user" style="display:none">
+      <div class="dr-av" id="dr-av">?</div>
+      <div>
+        <div class="dr-name" id="dr-nm">—</div>
+        <div class="dr-email" id="dr-em">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="dr-access-card" id="dr-acc-card" style="display:none">
+    <h4 id="dr-acc-title">No Access</h4>
+    <p id="dr-acc-sub">Pay 2,300 XAF to unlock all products.</p>
+  </div>
+  <div class="dr-sec">Navigate</div>
+  <div class="dr-item" onclick="showV('vault');drClose()">
+    <span class="dr-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></span> Vault Products
+  </div>
+  <div class="dr-item" onclick="showV('referral');drClose()">
+    <span class="dr-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--electric)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span> My Referral Link
+  </div>
+  <div class="dr-item" id="dr-upgrade" style="display:none" onclick="showV('gate');drClose()">
+    <span class="dr-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Get Access — 2,300 XAF
+  </div>
+  <div class="dr-sec">Account</div>
+  <div class="dr-item" onclick="signOut()">
+    <span class="dr-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Sign Out
+  </div>
+  <div class="dr-item" onclick="goSellizi()">
+    <span class="dr-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span> Back to Sellizi
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+<!-- AUTH -->
+<div id="v-auth" style="display:none">
+  <div class="auth-logo"><span class="auth-logo-main">Sellizi</span> <em>Vault</em></div>
+  <p style="color:var(--muted2);font-size:13px;margin-bottom:28px">Sign in with your Sellizi account or create one</p>
+  <button class="btn-google" onclick="signInGoogle()">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+  <div class="divider">or</div>
+  <div class="form-row"><input class="fi" type="email" id="a-email" placeholder="Email address"></div>
+  <div class="form-row" style="margin-bottom:20px"><input class="fi" type="password" id="a-pass" placeholder="Password (min 6 characters)"></div>
+  <button class="btn btn-primary" id="btn-in" onclick="signIn()" style="margin-bottom:10px">
+    <span id="spin-in" class="spin" style="display:none"></span> Sign In
+  </button>
+  <button class="btn btn-sec" id="btn-up" onclick="signUp()">
+    <span id="spin-up" class="spin" style="display:none"></span> Create Account
+  </button>
+  <p style="font-size:12px;color:var(--muted);margin-top:18px">Your Sellizi account works here too — same email &amp; password.</p>
+</div>
+
+<!-- GATE -->
+<div id="v-gate" style="display:none">
+  <div style="padding:50px 0 30px">
+    <div class="gate-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Premium Vault
+    </div>
+    <h1 class="gate-title">One-time access to <em>all</em> digital products</h1>
+    <p class="gate-sub">Pay once. Download ebooks, copy links, and publish any product on your Sellizi store — forever.</p>
+    <div class="price-card">
+      <div class="price-num" id="gate-price-main">2 300 <span style="font-size:19px;color:var(--muted)">XAF</span></div>
+      <div class="price-usd" id="gate-price-sub">one-time · lifetime access</div>
+      <ul class="feat-list">
+        <li>Unlimited downloads &amp; product links</li>
+        <li>Publish any product to your Sellizi store</li>
+        <li>30% referral commission (<span class="ref-xaf-val">690 XAF</span>/invite)</li>
+        <li>All future uploads included</li>
+      </ul>
+    </div>
+    <div class="ref-input-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <input type="text" id="ref-code" placeholder="Referral code (optional)">
+    </div>
+    <button class="buy-now-btn" onclick="openAshtechModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Pay with Mobile Money
+    </button>
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:16px">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:3px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secure via Ashtech Pay · Access activated immediately after payment
+    </p>
+    <button class="gate-logout-btn" onclick="signOut()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</div>
+
+<!-- VAULT -->
+<div id="v-vault" style="display:none">
+  <div class="vault-hdr">
+    <div class="vault-hdr-title">Sellizi Vault</div>
+    <span class="access-chip chip-unlocked" style="display:flex"><span class="pulse" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px"></span>Unlocked</span>
+  </div>
+  <div class="ref-sec">
+    <h3>Earn 30% Per Referral</h3>
+    <p>Share your link — earn <strong style="color:var(--accent)" class="ref-xaf-val">690 XAF</strong> every time someone pays through it.</p>
+    <div class="ref-link-box">
+      <span class="ref-link-text" id="ref-url">Loading…</span>
+      <button class="copy-btn" onclick="copyRef()">Copy</button>
+    </div>
+    <div class="ref-stats">
+      <div class="ref-stat"><div class="ref-sv" id="r-cnt">0</div><div class="ref-sl">Referrals</div></div>
+      <div class="ref-stat"><div class="ref-sv" id="r-xaf">0</div><div class="ref-sl">XAF Earned</div></div>
+    </div>
+  </div>
+  <div class="prod-grid" id="prod-grid">
+    <div class="sk sk-card"></div><div class="sk sk-card"></div>
+    <div class="sk sk-card"></div><div class="sk sk-card"></div>
+  </div>
+</div>
+
+<!-- REFERRAL VIEW -->
+<div id="v-referral" style="display:none">
+  <h2 style="font-family:var(--head);font-size:22px;font-weight:800;margin-bottom:18px;background:linear-gradient(135deg,var(--text) 40%,var(--violet) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Referral Program</h2>
+  <div class="ref-sec">
+    <h3>Earn 30% Commission</h3>
+    <p>Every friend who joins via your link earns you <strong style="color:var(--accent)" class="ref-xaf-val">690 XAF</strong>. No limit on referrals!</p>
+    <div class="ref-link-box" style="margin-top:12px">
+      <span class="ref-link-text" id="ref-url2">Loading…</span>
+      <button class="copy-btn" onclick="copyRef()">Copy</button>
+    </div>
+    <div class="ref-stats" style="margin-top:12px">
+      <div class="ref-stat"><div class="ref-sv" id="r-cnt2">0</div><div class="ref-sl">Referrals</div></div>
+      <div class="ref-stat"><div class="ref-sv" id="r-xaf2">0</div><div class="ref-sl">XAF Earned</div></div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(19,26,43,0.9),rgba(25,32,56,0.9));border:1px solid var(--border2);border-radius:var(--r);padding:18px;backdrop-filter:blur(16px);">
+    <h3 style="font-family:var(--head);font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)">How payouts work</h3>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.7">Commissions are tracked automatically in your Sellizi account balance. Withdraw from your Sellizi wallet once you reach <strong style="color:var(--accent)" class="withdraw-xaf-val">2,000 XAF</strong>.</p>
+  </div>
+</div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bnav" style="display:none">
+  <div class="bnav-item on" id="bn-vault" onclick="showV('vault')">
+    <div class="bni"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+    <div class="bnl">Vault</div>
+  </div>
+  <div class="bnav-item" id="bn-referral" onclick="showV('referral')">
+    <div class="bni"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+    <div class="bnl">Refer</div>
+  </div>
+  <div class="bnav-item" onclick="goSellizi()">
+    <div class="bni"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+    <div class="bnl">Sellizi</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://fonnpcpdeubydvaanlmi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_H_r1syeJWpe7UOHhbxBicg_KUaWm8Xd';
+const VAULT_URL    = 'https://vault.sellizi.store';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const VAULT_PRICE_XAF = 2300;
+const REFERRAL_XAF    = 690;
+const WITHDRAW_XAF    = 2000;
+
+const XAF_RATES_FALLBACK = {
+  XAF:1,XOF:1,CDF:0.73,BIF:0.57,RWF:0.20,STN:0.034,AOA:0.13,NGN:0.26,GHS:0.023,GNF:0.14,
+  SLE:0.0037,GMD:0.11,LRD:0.028,CVE:0.016,MRU:0.064,KES:0.023,TZS:0.41,UGX:0.61,
+  ETB:0.086,SOS:0.93,DJF:0.29,ERN:0.025,SSP:2.15,ZMW:0.034,MWK:0.28,MZN:0.10,
+  MGA:0.71,KMF:1,SCR:0.023,MUR:0.073,EGP:0.051,MAD:0.017,DZD:0.22,TND:0.0051,
+  LYD:0.0079,SDG:0.094,ZAR:0.030,ZWL:0.53,BWP:0.023,NAD:0.030,LSL:0.030,SZL:0.030,
+  EUR:0.00152,CHF:0.00166,USD:0.00165,GBP:0.00130,CAD:0.00226,AUD:0.00253,JPY:0.248,
+  CNY:0.01195,INR:0.1374,BRL:0.00834,MXN:0.03165,AED:0.00606,SAR:0.00619,QAR:0.00601,
+  KWD:0.000507,TRY:0.0529,
+};
+let XAF_RATES = { ...XAF_RATES_FALLBACK };
+const _savedCur = (()=>{ try{return JSON.parse(localStorage.getItem('sellizi_currency'));}catch(_){return null;} })();
+let activeCurrency = _savedCur || { cur:'XAF', sym:'F CFA' };
+
+async function fetchLiveRates() {
+  const SIX_HOURS = 6*60*60*1000;
+  try { const c=JSON.parse(localStorage.getItem('_sz_rates')||'null'); if(c&&c.ts&&(Date.now()-c.ts<SIX_HOURS)&&c.rates){XAF_RATES=c.rates;return;} } catch(_) {}
+  try {
+    const res=await fetch('https://open.er-api.com/v6/latest/XAF',{signal:AbortSignal.timeout(6000)});
+    const data=await res.json();
+    if(data.result==='success'&&data.rates){ XAF_RATES={...XAF_RATES_FALLBACK,...data.rates}; try{localStorage.setItem('_sz_rates',JSON.stringify({rates:XAF_RATES,ts:Date.now()}));}catch(_){} }
+  } catch(_) {}
+}
+function convertFromXAF(a){return(a||0)*(XAF_RATES[activeCurrency.cur]||1)}
+const NO_DECIMALS=['XAF','XOF','CDF','BIF','RWF','GNF','UGX','TZS','SOS','SSP','ZWL','MGA','KMF','NGN','LRD'];
+function fmtVaultPrice(xaf){
+  const v=convertFromXAF(xaf),cur=activeCurrency.cur,sym=activeCurrency.sym;
+  const dec=NO_DECIMALS.includes(cur)?0:2;
+  return v.toLocaleString('fr-FR',{minimumFractionDigits:dec,maximumFractionDigits:dec})+' '+sym;
+}
+function updatePriceDisplay(){
+  const cur=activeCurrency.cur,isXAF=cur==='XAF',mainPrice=fmtVaultPrice(VAULT_PRICE_XAF);
+  const el=document.getElementById('gate-price-main');
+  if(el){if(isXAF){el.innerHTML=`2 300 <span style="font-size:19px;color:var(--muted)">XAF</span>`;}else{el.innerHTML=mainPrice;el.style.fontSize=mainPrice.length>12?'28px':'40px';}}
+  const sub=document.getElementById('gate-price-sub');
+  if(sub)sub.textContent=isXAF?'one-time · lifetime access':`≈ 2,300 XAF · one-time · lifetime access`;
+  document.querySelectorAll('.ref-xaf-val').forEach(e=>e.textContent=fmtVaultPrice(REFERRAL_XAF));
+  document.querySelectorAll('.withdraw-xaf-val').forEach(e=>e.textContent=fmtVaultPrice(WITHDRAW_XAF));
+}
+fetchLiveRates().then(()=>updatePriceDisplay());
+window.addEventListener('storage',(e)=>{if(e.key==='sellizi_currency'){try{const nc=JSON.parse(e.newValue);if(nc&&nc.cur){activeCurrency=nc;updatePriceDisplay();}}catch(_){}}});
+
+let _user=null,_access=false,_refCode=null;
+
+async function init(){
+  const hash=window.location.hash;
+  if(hash.includes('vault_token=')){
+    const hp=new URLSearchParams(hash.replace('#',''));
+    const at=hp.get('vault_token'),rt=hp.get('vault_refresh');
+    if(at&&rt){try{const{data}=await sb.auth.setSession({access_token:at,refresh_token:rt});if(data?.session)_user=data.session.user;}catch(_){}}
+    history.replaceState({},'',window.location.pathname+window.location.search);
+  }
+  const params=new URLSearchParams(location.search);
+  const payOk=params.get('payment')==='success'&&params.get('hub')==='1';
+  const uidParam=params.get('uid'),refParam=params.get('hub_ref');
+  if(payOk)history.replaceState({},'',location.pathname);
+  const refInUrl=params.get('hub_ref')||params.get('ref');
+  if(refInUrl){localStorage.setItem('vaultRef',refInUrl);document.getElementById('ref-code').value=refInUrl;}
+  if(!_user){const{data:{session}}=await sb.auth.getSession();if(session)_user=session.user;}
+  if(_user){
+    try{await loadProfile();if(payOk)await grantAccess(_user.id,uidParam,refParam||localStorage.getItem('vaultRef'));}catch(e){console.warn('loadProfile error',e);}
+    renderAuthed();
+  }else{showV('auth');}
+  sb.auth.onAuthStateChange(async(ev,sess)=>{
+    if(ev==='SIGNED_IN'&&sess){_user=sess.user;await loadProfile();renderAuthed();}
+    else if(ev==='SIGNED_OUT'){_user=null;_access=false;showV('auth');['bnav','ham-btn','access-chip'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+  });
+}
+
+async function loadProfile(){
+  if(!_user)return;
+  try{const{data}=await sb.from('hub_access').select('id').eq('user_id',_user.id);_access=!!(data&&data.length>0);}catch(_){_access=false;}
+  _refCode=_user.id;
+  try{
+    const{data:udata}=await sb.from('users').select('currency').eq('id',_user.id).single();
+    if(udata&&udata.currency&&udata.currency!==activeCurrency.cur){
+      const cur=udata.currency;
+      const knownSyms={XAF:'F CFA',XOF:'F CFA',EUR:'€',USD:'$',GBP:'£',CAD:'CA$',AUD:'A$',JPY:'¥',CNY:'¥',NGN:'₦',KES:'KSh',GHS:'₵',ZAR:'R',EGP:'E£',MAD:'MAD',TND:'DT',DZD:'DA'};
+      activeCurrency={cur,sym:knownSyms[cur]||cur};
+      try{localStorage.setItem('sellizi_currency',JSON.stringify(activeCurrency));}catch(_){}
+    }
+  }catch(_){}
+  updatePriceDisplay();
+}
+
+function renderAuthed(){
+  document.getElementById('ham-btn').style.display='flex';
+  const chip=document.getElementById('access-chip');chip.style.display='flex';
+  if(_access){chip.className='access-chip chip-unlocked';chip.textContent='✓ Access';}
+  else{chip.className='access-chip chip-locked';chip.textContent='No Access';}
+  document.getElementById('dr-user').style.display='flex';
+  document.getElementById('dr-av').textContent=(_user.email||'?')[0].toUpperCase();
+  document.getElementById('dr-nm').textContent=(_user.email||'').split('@')[0];
+  document.getElementById('dr-em').textContent=_user.email||'';
+  document.getElementById('dr-acc-card').style.display='block';
+  if(_access){
+    document.getElementById('dr-acc-title').innerHTML='<span class="pulse" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px"></span> Access Active';
+    document.getElementById('dr-acc-sub').textContent='You have full vault access!';
+    document.getElementById('dr-upgrade').style.display='none';
+    document.getElementById('ham-btn').style.display='flex';
+    document.getElementById('bnav').style.display='flex';
+    showV('vault');loadProducts();loadRefStats();
+  }else{
+    document.getElementById('dr-acc-title').textContent='No Access';
+    document.getElementById('dr-acc-sub').textContent='Pay 2,300 XAF to unlock all products.';
+    document.getElementById('dr-upgrade').style.display='flex';
+    document.getElementById('ham-btn').style.display='none';
+    document.getElementById('bnav').style.display='none';
+    showV('gate');
+  }
+}
+
+async function signIn(){
+  const email=document.getElementById('a-email').value.trim(),pass=document.getElementById('a-pass').value;
+  if(!email||!pass)return toast('Fill in email and password','err');
+  setSpin('spin-in','btn-in',true);
+  try{const{data,error}=await sb.auth.signInWithPassword({email,password:pass});if(error){toast(error.message,'err');return;}if(data?.user){_user=data.user;await loadProfile();renderAuthed();}}
+  catch(e){toast('Login failed. Try again.','err');}finally{setSpin('spin-in','btn-in',false);}
+}
+async function signUp(){
+  const email=document.getElementById('a-email').value.trim(),pass=document.getElementById('a-pass').value;
+  if(!email||!pass)return toast('Fill in email and password','err');
+  if(pass.length<6)return toast('Password must be 6+ characters','err');
+  setSpin('spin-up','btn-up',true);
+  try{const{data,error}=await sb.auth.signUp({email,password:pass});if(error){toast(error.message,'err');return;}if(data?.session&&data?.user){_user=data.user;await loadProfile();renderAuthed();}else{toast('Account created! Check your email to confirm.','ok');}}
+  catch(e){toast('Sign up failed. Try again.','err');}finally{setSpin('spin-up','btn-up',false);}
+}
+async function signInGoogle(){
+  const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:VAULT_URL}});
+  if(error)toast(error.message,'err');
+}
+
+/* ── ASHTECH PAY ── */
+// All requests go through our own Supabase Edge Functions, never directly
+// to ashtechpay.top from the browser — the API key only ever lives server-side.
+const FN_BASE=SUPABASE_URL+'/functions/v1';
+let _apmCountries=null,_apmPoll=null,_apmRef=null,_apmTxId=null,_apmLastOperator=null,_apmLastCountry=null;
+
+async function apmLoadCountries(){
+  if(_apmCountries)return _apmCountries;
+  try{
+    const res=await fetch(FN_BASE+'/ashtech-countries', { headers: { apikey: SUPABASE_KEY } });
+    const all=await res.json();
+    // Only show countries our backend currently prices (fixed XAF/XOF peg).
+    const SUPPORTED=['BJ','BF','CM','CF','CG','CI','GA','GQ','GW','ML','NE','SN','TD','TG'];
+    _apmCountries=Array.isArray(all)?all.filter(c=>SUPPORTED.includes(c.code)):[];
+  }catch(_){
+    _apmCountries=[{code:'CM',name:'Cameroun',currency:'XAF',operators:['MTN Mobile Money','Orange Money']}];
+  }
+  return _apmCountries;
+}
+
+async function openAshtechModal(){
+  document.getElementById('apm').classList.add('on');document.body.style.overflow='hidden';
+  apmRenderLoading();
+  const countries=await apmLoadCountries();
+  apmRenderForm(countries);
+}
+function apmClose(){
+  document.getElementById('apm').classList.remove('on');document.body.style.overflow='';
+  if(_apmPoll){clearInterval(_apmPoll);_apmPoll=null;}
+}
+function apmBgClose(e){if(e.target===document.getElementById('apm'))apmClose();}
+
+function apmRenderLoading(){
+  document.getElementById('apm-body').innerHTML='<div style="display:flex;align-items:center;gap:10px;color:var(--text2);font-size:13px;padding:10px 0"><span class="spin"></span> Loading payment options…</div>';
+  document.getElementById('apm-actions').innerHTML='';
+}
+
+function apmRenderForm(countries){
+  const body=document.getElementById('apm-body'),actions=document.getElementById('apm-actions');
+  const ref=localStorage.getItem('vaultRef')||document.getElementById('ref-code').value||'';
+  body.innerHTML=`
+    <div class="pdm-section">
+      <div class="pdm-section-label">Country</div>
+      <select class="fi" id="apm-country" onchange="apmOnCountryChange()"></select>
+    </div>
+    <div class="pdm-section">
+      <div class="pdm-section-label">Operator</div>
+      <select class="fi" id="apm-operator"></select>
+    </div>
+    <div class="pdm-section">
+      <div class="pdm-section-label">Phone number</div>
+      <input class="fi" id="apm-phone" type="tel" placeholder="e.g. 670000000">
+    </div>
+    <div id="apm-msg" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+  `;
+  const sel=document.getElementById('apm-country');
+  sel.innerHTML=countries.map(c=>`<option value="${esc(c.code)}">${esc(c.name)}</option>`).join('');
+  apmOnCountryChange();
+  actions.innerHTML=`<button class="pdm-btn pdm-btn-open" id="apm-pay-btn" onclick="apmSubmit('${esc(ref)}')">Pay 2,300 XAF / XOF</button>`;
+}
+function apmOnCountryChange(){
+  const code=document.getElementById('apm-country').value;
+  const c=(_apmCountries||[]).find(x=>x.code===code);
+  const opSel=document.getElementById('apm-operator');
+  opSel.innerHTML=(c?.operators||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('');
+}
+
+async function apmAuthHeader(){
+  const{data:{session}}=await sb.auth.getSession();
+  return {apikey: SUPABASE_KEY, ...(session?.access_token?{'Authorization':'Bearer '+session.access_token}:{})};
+}
+
+async function apmSubmit(refCode,otp){
+  const phone=document.getElementById('apm-phone')?.value.trim()||document.getElementById('apm-otp-phone')?.value.trim();
+  const operator=document.getElementById('apm-operator')?.value||_apmLastOperator;
+  const country_code=document.getElementById('apm-country')?.value||_apmLastCountry;
+  if(!otp&&(!phone||!operator||!country_code))return toast('Fill in your phone number','err');
+  _apmLastOperator=operator;_apmLastCountry=country_code;
+  const btn=document.getElementById('apm-pay-btn')||document.getElementById('apm-otp-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin"></span> Processing…';}
+  try{
+    const headers={'Content-Type':'application/json',...(await apmAuthHeader())};
+    const res=await fetch(FN_BASE+'/ashtech-collect',{
+      method:'POST',headers,
+      body:JSON.stringify({phone,operator,country_code,otp,reference:_apmRef,referrer_id:refCode||null})
+    });
+    const data=await res.json();
+    _apmRef=data.reference||_apmRef;
+    if(res.status===202&&data.flow==='wave'){
+      _apmTxId=data.transaction_id;apmRenderWave(data.wave_url);apmStartPoll();
+    }else if(res.status===202){
+      _apmTxId=data.transaction_id;apmRenderWaiting();apmStartPoll();
+    }else if(res.status===400&&data.error==='otp_required'){
+      apmRenderOtp(data.ussd_code,phone,operator,country_code);
+    }else{
+      toast(data.message||'Payment could not be started','err');
+      apmRenderForm(_apmCountries);
+    }
+  }catch(e){
+    toast('Network error — please try again','err');
+  }
+}
+
+function apmRenderWaiting(){
+  document.getElementById('apm-body').innerHTML=`
+    <div style="text-align:center;padding:14px 6px">
+      <div class="spin" style="width:30px;height:30px;border-width:3px;margin-bottom:14px"></div>
+      <div style="font-family:var(--head);font-weight:700;margin-bottom:6px">Check your phone</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Approve the Mobile Money prompt sent to your phone. This page will update automatically once it's confirmed.</div>
+    </div>`;
+  document.getElementById('apm-actions').innerHTML='';
+}
+function apmRenderWave(waveUrl){
+  document.getElementById('apm-body').innerHTML=`
+    <div style="text-align:center;padding:6px 6px 14px">
+      <div style="font-family:var(--head);font-weight:700;margin-bottom:6px">Pay with Wave</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Tap below to open Wave and confirm your payment.</div>
+    </div>`;
+  document.getElementById('apm-actions').innerHTML=`<button class="pdm-btn pdm-btn-open" onclick="window.open('${esc(waveUrl)}','_blank')">Open Wave</button>`;
+}
+function apmRenderOtp(ussdCode,phone,operator,country_code){
+  _apmLastOperator=operator;_apmLastCountry=country_code;
+  document.getElementById('apm-body').innerHTML=`
+    <div class="pdm-section">
+      <div class="pdm-section-label">Verification code</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+        ${ussdCode?`Dial <strong style="color:var(--text)">${esc(ussdCode)}</strong> on your phone to get your code.`:'Enter the OTP code you received by SMS.'}
+      </div>
+      <input class="fi" id="apm-otp" inputmode="numeric" placeholder="123456">
+      <input type="hidden" id="apm-otp-phone" value="${esc(phone)}">
+    </div>`;
+  document.getElementById('apm-actions').innerHTML=`<button class="pdm-btn pdm-btn-open" id="apm-otp-btn" onclick="apmSubmit(null,document.getElementById('apm-otp').value.trim())">Confirm</button>`;
+}
+
+function apmStartPoll(){
+  if(_apmPoll)clearInterval(_apmPoll);
+  let tries=0;
+  _apmPoll=setInterval(async()=>{
+    tries++;
+    if(tries>40){clearInterval(_apmPoll);_apmPoll=null;toast('Still waiting — check back in a moment','err');return;}
+    try{
+      const headers=await apmAuthHeader();
+      const res=await fetch(FN_BASE+'/ashtech-status?transaction_id='+encodeURIComponent(_apmTxId),{headers});
+      const data=await res.json();
+      if(data.status==='success'){
+        clearInterval(_apmPoll);_apmPoll=null;
+        await apmFinishSuccess();
+      }else if(data.status==='failed'){
+        clearInterval(_apmPoll);_apmPoll=null;
+        apmRenderFailed();
+      }
+    }catch(_){}
+  },4000);
+}
+
+async function apmFinishSuccess(){
+  document.getElementById('apm-body').innerHTML=`
+    <div style="text-align:center;padding:14px 6px">
+      <div style="font-family:var(--head);font-weight:700;margin-bottom:6px;color:var(--green)">Payment confirmed!</div>
+      <div style="font-size:13px;color:var(--text2)">Unlocking your vault…</div>
+    </div>`;
+  document.getElementById('apm-actions').innerHTML='';
+  // The webhook grants access server-side; re-check a few times in case
+  // it hasn't landed yet by the time we get here.
+  for(let i=0;i<6;i++){
+    await loadProfile();
+    if(_access){apmClose();unlockUI();return;}
+    await new Promise(r=>setTimeout(r,1500));
+  }
+  toast('Payment confirmed — refresh in a moment if access doesn\'t appear','ok');
+  apmClose();
+}
+function apmRenderFailed(){
+  document.getElementById('apm-body').innerHTML=`
+    <div style="text-align:center;padding:14px 6px">
+      <div style="font-family:var(--head);font-weight:700;margin-bottom:6px;color:var(--red)">Payment failed</div>
+      <div style="font-size:13px;color:var(--text2)">It was declined, expired, or cancelled. You can try again.</div>
+    </div>`;
+  document.getElementById('apm-actions').innerHTML=`<button class="pdm-btn pdm-btn-open" onclick="apmRenderForm(_apmCountries)">Try again</button>`;
+}
+
+async function grantAccess(userId,uidParam,referrerId){
+  const uid=userId||uidParam;if(!uid)return;
+  const{data:ex}=await sb.from('hub_access').select('id').eq('user_id',uid);
+  if(ex&&ex.length>0){unlockUI();return;}
+  const{error}=await sb.from('hub_access').insert({user_id:uid,granted_at:new Date().toISOString(),granted_by_admin:false});
+  if(error){toast('Access setup failed — contact support','err');return;}
+  if(referrerId&&referrerId!==uid){
+    await sb.from('hub_referral_earnings').insert({referrer_id:referrerId,referred_user_id:uid,amount:690,earned_at:new Date().toISOString()}).catch(()=>{});
+    await sb.rpc('increment_balance',{uid:referrerId,amount:690}).catch(()=>{});
+  }
+  localStorage.removeItem('vaultRef');_access=true;unlockUI();
+}
+function unlockUI(){
+  _access=true;toast('Access granted! Welcome to the Vault!','ok');
+  document.getElementById('ham-btn').style.display='flex';
+  document.getElementById('bnav').style.display='flex';
+  renderAuthed();loadProducts();loadRefStats();
+}
+
+/* ── COPY HELPER ── */
+function cpText(text,btn){
+  const copy=()=>{
+    if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>{if(btn){btn.textContent='✓ Copied';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);}toast('Copied!','ok');}).catch(()=>fbCopy(text));
+    else fbCopy(text);
+  };copy();
+}
+
+/* ── PRODUCTS ── */
+const PROD_ICONS={
+  file:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  link:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  ebook:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  course:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+  template:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,
+  software:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>`,
+  default:`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`
+};
+const DL_ICON=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+const LK_ICON=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+const PUB_ICON=`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`;
+const EMPTY_ICON=`<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`;
+
+async function loadProducts(){
+  const{data:prods}=await sb.from('hub_products').select('*').order('created_at',{ascending:false});
+  const grid=document.getElementById('prod-grid');
+  if(!prods||!prods.length){grid.innerHTML=`<div class="empty"><div class="empty-ic">${EMPTY_ICON}</div><div class="empty-t">No products yet</div><div>Admin will upload products soon</div></div>`;return;}
+  grid.innerHTML=prods.map(p=>{
+    const ic=PROD_ICONS[p.type]||PROD_ICONS.default;
+    const img=p.image_url?`<div class="prod-img"><img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy"></div>`:`<div class="prod-img">${ic}</div>`;
+    const see=`<button class="act-btn btn-see" onclick="event.stopPropagation();pdmOpen('${p.id}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View</button>`;
+    const dl=p.file_url?`<button class="act-btn btn-dl" onclick="event.stopPropagation();dlProd('${p.id}','${esc(p.name)}')">${DL_ICON} Download</button>`:'';
+    const lk=p.link_url?`<button class="act-btn btn-lk" onclick="event.stopPropagation();copyLink('${esc(p.link_url)}')">${LK_ICON} Copy</button>`:'';
+    const pub=`<button class="act-btn btn-pub" onclick="event.stopPropagation();publishProd('${esc(p.name)}','${esc(p.short_desc||'')}')">${PUB_ICON} Sell</button>`;
+    return `<div class="prod-card" onclick="pdmOpen('${p.id}')">${img}<div class="prod-body"><div class="prod-type">${(p.type||'other').toUpperCase()}</div><div class="prod-name">${esc(p.name)}</div></div><div class="prod-acts">${see}${dl}${lk}${pub}</div></div>`;
+  }).join('');
+}
+
+let _prods=[];
+async function loadProductsWithStore(){const{data}=await sb.from('hub_products').select('*').order('created_at',{ascending:false});_prods=data||[];return _prods;}
+
+function dlProd(id,name){
+  const p=_prods.find(x=>x.id===id);
+  if(p&&p.file_url){const a=document.createElement('a');a.href=p.file_url;a.download=name||'file';a.target='_blank';a.click();toast('Download started!','ok');}
+  else{sb.from('hub_products').select('file_url').eq('id',id).single().then(({data:row})=>{if(row&&row.file_url){const a=document.createElement('a');a.href=row.file_url;a.download=name;a.target='_blank';a.click();toast('Download started!','ok');}});}
+}
+function copyLink(url){
+  if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Link copied!','ok')).catch(()=>fbCopy(url));
+  else fbCopy(url);
+}
+function fbCopy(text){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  toast('Link copied!','ok');
+}
+function publishProd(name,desc){window.open(`https://sellizi.store/?page=sell&title=${encodeURIComponent(name)}&desc=${encodeURIComponent(desc)}`,'_blank');toast('Opening Sellizi sell page…','ok');}
+
+/* ── PRODUCT DETAIL MODAL ── */
+function pdmOpen(id){
+  const p=_prods.find(x=>x.id===id);
+  if(!p){sb.from('hub_products').select('*').eq('id',id).single().then(({data})=>{if(data){_prods.push(data);pdmRender(data);}});return;}
+  pdmRender(p);
+}
+
+function pdmRender(p){
+  const overlay=document.getElementById('pdm');
+  const mediaWrap=document.getElementById('pdm-media-wrap');
+  const body=document.getElementById('pdm-body');
+  const actions=document.getElementById('pdm-actions');
+  mediaWrap.innerHTML='';mediaWrap.style.display='none';
+  const fileUrl=p.file_url||'',imgUrl=p.image_url||'',linkUrl=p.link_url||'';
+  const ext=fileUrl?fileUrl.split('?')[0].split('.').pop().toLowerCase():'';
+  const isImg=imgUrl||/\.(png|jpg|jpeg|gif|webp|svg|bmp)$/i.test(fileUrl);
+  const isVideo=/\.(mp4|webm|ogg|mov|avi|mkv)$/i.test(fileUrl);
+  const isAudio=/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(fileUrl);
+  const isPdf=/\.pdf$/i.test(fileUrl);
+  const isApk=/\.apk$/i.test(fileUrl);
+  const isZip=/\.(zip|rar|7z|tar|gz)$/i.test(fileUrl);
+  const isYT=linkUrl&&/youtu\.?be/.test(linkUrl);
+  const isVimeo=linkUrl&&/vimeo\.com/.test(linkUrl);
+  if(imgUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<img class="pdm-media" src="${esc(imgUrl)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">`;
+  }else if(isVideo&&fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<video class="pdm-media" controls preload="metadata"><source src="${esc(fileUrl)}"><p style="color:var(--muted);padding:20px;font-size:13px">Video cannot be previewed.</p></video>`;
+  }else if(isAudio&&fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<audio controls><source src="${esc(fileUrl)}"></audio>`;
+  }else if(isPdf&&fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<div class="pdm-file-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="pdm-file-name">PDF Document</div></div>`;
+  }else if(isApk&&fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<div class="pdm-file-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01M8 6h8M8 10h8M8 14h5"/></svg><div class="pdm-file-name">Android App (APK)</div></div>`;
+  }else if(isZip&&fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<div class="pdm-file-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FFCC00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><div class="pdm-file-name">Archive (${ext.toUpperCase()})</div></div>`;
+  }else if(fileUrl){mediaWrap.style.display='';mediaWrap.innerHTML=`<div class="pdm-file-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="pdm-file-name">${esc(fileUrl.split('/').pop().split('?')[0]||'File')}</div></div>`;
+  }else if(isYT){mediaWrap.style.display='';const ytId=linkUrl.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1]||'';if(ytId)mediaWrap.innerHTML=`<iframe src="https://www.youtube.com/embed/${ytId}" allowfullscreen loading="lazy"></iframe>`;
+  }else if(isVimeo){mediaWrap.style.display='';const vmId=linkUrl.match(/vimeo\.com\/(\d+)/)?.[1]||'';if(vmId)mediaWrap.innerHTML=`<iframe src="https://player.vimeo.com/video/${vmId}" allowfullscreen loading="lazy"></iframe>`;}
+
+  const typeLabel=(p.type||'other').toUpperCase();
+  let bodyHtml=`<div class="pdm-badge">${typeLabel}</div>`;
+  bodyHtml+=`<div class="pdm-section"><div class="pdm-section-label">Product Name</div><div class="pdm-link-box" style="color:var(--text)"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font);font-size:14px;font-weight:700">${esc(p.name)}</span><button class="pdm-link-copy" onclick="cpText('${esc(p.name)}',this)">Copy</button></div></div>`;
+  if(p.short_desc)bodyHtml+=`<div class="pdm-section"><div class="pdm-section-label">Short Description</div><div class="pdm-link-box" style="color:var(--text2);align-items:flex-start"><span style="flex:1;font-family:var(--font);font-size:13px;white-space:pre-wrap;word-break:break-word">${esc(p.short_desc)}</span><button class="pdm-link-copy" style="margin-top:1px" onclick="cpText('${esc(p.short_desc)}',this)">Copy</button></div></div>`;
+  if(linkUrl){bodyHtml+=`<div class="pdm-section"><div class="pdm-section-label">Product Link</div><div class="pdm-link-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(linkUrl)}</span><button class="pdm-link-copy" onclick="cpText('${esc(linkUrl)}',this)">Copy</button></div></div>`;}
+  if(fileUrl){const fname=fileUrl.split('/').pop().split('?')[0]||'File';bodyHtml+=`<div class="pdm-section"><div class="pdm-section-label">Uploaded File</div><div class="pdm-link-box" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(fname)}</span></div></div>`;}
+  body.innerHTML=bodyHtml;
+
+  let actHtml='';
+  if(fileUrl){const label=isApk?'Download APK':isPdf?'Download PDF':'Download File';actHtml+=`<button class="pdm-btn pdm-btn-dl" onclick="dlProdFull('${esc(fileUrl)}','${esc(p.name)}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>${label}</button>`;}
+  if(linkUrl){actHtml+=`<button class="pdm-btn pdm-btn-open" onclick="window.open('${esc(linkUrl)}','_blank')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open Link</button><button class="pdm-btn pdm-btn-lk" onclick="copyLink('${esc(linkUrl)}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy Link</button>`;}
+  actHtml+=`<button class="pdm-btn pdm-btn-pub" onclick="publishProd('${esc(p.name)}','${esc(p.short_desc||'')}');pdmClose()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Sell This Product</button>`;
+  actions.innerHTML=actHtml;
+  overlay.classList.add('on');document.body.style.overflow='hidden';
+}
+function pdmClose(){document.getElementById('pdm').classList.remove('on');document.body.style.overflow='';}
+function pdmBgClose(e){if(e.target===document.getElementById('pdm'))pdmClose();}
+function dlProdFull(url,name){const a=document.createElement('a');a.href=url;a.download=name||'file';a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);toast('Download started!','ok');}
+
+/* ── REFERRAL ── */
+async function loadRefStats(){
+  if(!_user)return;
+  const refUrl=VAULT_URL+'?ref='+_user.id;
+  ['ref-url','ref-url2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=refUrl;});
+  const{data:refs}=await sb.from('hub_referral_earnings').select('amount').eq('referrer_id',_user.id);
+  const count=refs?refs.length:0,earned=refs?refs.reduce((s,r)=>s+(r.amount||0),0):0;
+  ['r-cnt','r-cnt2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=count;});
+  ['r-xaf','r-xaf2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=earned.toLocaleString();});
+}
+function copyRef(){if(!_user)return;copyLink(VAULT_URL+'?ref='+_user.id);}
+
+/* ── UI HELPERS ── */
+function showV(v){
+  ['auth','gate','vault','referral'].forEach(x=>{const el=document.getElementById('v-'+x);if(el)el.style.display=x===v?'block':'none';});
+  ['vault','referral'].forEach(x=>{const el=document.getElementById('bn-'+x);if(el)el.classList.toggle('on',x===v);});
+  if(v==='referral')loadRefStats();
+  window.scrollTo(0,0);
+}
+function drOpen(){document.getElementById('dr').classList.add('on');document.getElementById('dr-ov').classList.add('on');}
+function drClose(){document.getElementById('dr').classList.remove('on');document.getElementById('dr-ov').classList.remove('on');}
+let _tTimer;
+function toast(msg,type=''){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+(type||'');clearTimeout(_tTimer);_tTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+function setSpin(spinId,btnId,on){const s=document.getElementById(spinId);if(s)s.style.display=on?'inline-block':'none';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+async function _vaultReady(){await loadProductsWithStore();loadProducts();}
+function goSellizi(){drClose();const m=document.querySelector('main');m.classList.add('fading');setTimeout(()=>{window.location.href='https://sellizi.store/#home';},200);}
+async function signOut(){drClose();const m=document.querySelector('main');m.classList.add('fading');setTimeout(async()=>{await sb.auth.signOut();m.classList.remove('fading');},200);}
+
+init().then(()=>{if(_access)_vaultReady();});
+</script>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="pdm-overlay" id="pdm" onclick="pdmBgClose(event)">
+  <div class="pdm-sheet" id="pdm-sheet">
+    <div class="pdm-handle"></div>
+    <div class="pdm-head">
+      <div style="font-family:var(--head);font-size:13px;font-weight:700;color:var(--muted2)">Product Details</div>
+      <button class="pdm-close" onclick="pdmClose()">&#x2715;</button>
+    </div>
+    <div id="pdm-media-wrap" class="pdm-media-wrap" style="display:none"></div>
+    <div class="pdm-body" id="pdm-body"></div>
+    <div class="pdm-actions" id="pdm-actions"></div>
+  </div>
+</div>
+
+<!-- ASHTECH PAY MODAL -->
+<div class="pdm-overlay" id="apm" onclick="apmBgClose(event)">
+  <div class="pdm-sheet" id="apm-sheet">
+    <div class="pdm-handle"></div>
+    <div class="pdm-head">
+      <div style="font-family:var(--head);font-size:13px;font-weight:700;color:var(--muted2)">Pay with Mobile Money</div>
+      <button class="pdm-close" onclick="apmClose()">&#x2715;</button>
+    </div>
+    <div class="pdm-body" id="apm-body"></div>
+    <div class="pdm-actions" id="apm-actions"></div>
+  </div>
+</div>
+
+</body>
+</html>
